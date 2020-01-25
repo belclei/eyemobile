@@ -15,7 +15,7 @@ class TransacaoController {
 
     const nsuExists = await Transacao.findOne({ where: { nsu } });
     if (nsuExists) {
-      return res.status(400).json({ error: 'NSU already exists.' });
+      return res.status(409).json({ error: 'NSU already exists.' });
     }
 
     /**

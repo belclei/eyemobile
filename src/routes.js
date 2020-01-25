@@ -4,7 +4,7 @@ import authTerminal from './app/middlewares/authTerminal';
 import TransacaoController from './app/controllers/TransacaoController';
 import ExtratoController from './app/controllers/ExtratoController';
 
-import validateTransacaoStore from './app/validators/TrsansacaoStore';
+import validateTransacaoStore from './app/validators/TransacaoStore';
 import SaldoController from './app/controllers/SaldoController';
 
 const routes = new Router();

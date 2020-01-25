@@ -1,0 +1,264 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "DESAFIO TÉCNICO PARA BACK‐END",
+    "description": "A empresa Cartões Ltda, oferece um serviço de meios de pagamento em cartão de débito e crédito. Para execução do serviço, dispõe de máquinas de cartão para captura dos pagamentos e um portal para acompanhamento dos recebíveis.",
+    "contact": {
+      "email": "belclei@gmail.com"
+    },
+    "version": "1.0.0-oas3"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "terminal",
+      "description": "Dados enviados pela máquina de cartão"
+    },
+    {
+      "name": "portal",
+      "description": "Dados acessados via portal de administração de cartões"
+    }
+  ],
+  "paths": {
+    "/extrato": {
+      "get": {
+        "tags": ["portal"],
+        "summary": "detalhamento das transações",
+        "description": "detalhamento de todas as transações realizadas",
+        "responses": {
+          "200": {
+            "description": "lista de todas as trasnsações registradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransacaoCompleta"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication information is missing or invalid",
+            "headers": {
+              "WWW_Authenticate": {
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/saldo": {
+      "get": {
+        "tags": ["portal"],
+        "summary": "consulta de saldo",
+        "description": "valores já disponíveis e os valores a receber, baseado na data de acionamento desta consulta",
+        "responses": {
+          "200": {
+            "description": "Saldo disponível e à receber",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication information is missing or invalid",
+            "headers": {
+              "WWW_Authenticate": {
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transacao": {
+      "post": {
+        "tags": ["terminal"],
+        "summary": "registra uma nova transação na máquina de cartão",
+        "description": "Registra uma nova transação gerada a partir da máquina de cartão",
+        "requestBody": {
+          "description": "dados gerados pela máquina de cartão",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transacao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransacaoCompleta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "validation fails"
+          },
+          "401": {
+            "description": "Authentication information is missing or invalid",
+            "headers": {
+              "WWW_Authenticate": {
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "NSU already exists"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Transacao": {
+        "required": ["bandeira", "horario", "modalidade", "nsu", "valor"],
+        "type": "object",
+        "properties": {
+          "nsu": {
+            "type": "string",
+            "description": "Número sequencial único",
+            "example": "0459360"
+          },
+          "valor": {
+            "type": "number",
+            "description": "Valor bruto da transação",
+            "example": 98.35
+          },
+          "bandeira": {
+            "type": "string",
+            "description": "Bandeira do cartão do consumidor",
+            "enum": ["VISA", "MASTERCARD", "ELO", "AMEX"]
+          },
+          "modalidade": {
+            "type": "string",
+            "description": "Modalidade utilizada na transação",
+            "enum": ["debito", "credito"]
+          },
+          "horario": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2016-08-29T09:12:33.001Z"
+          }
+        }
+      },
+      "TransacaoCompleta": {
+        "required": [
+          "bandeira",
+          "disponivel",
+          "horario",
+          "liquido",
+          "modalidade",
+          "nsu",
+          "valor"
+        ],
+        "type": "object",
+        "properties": {
+          "nsu": {
+            "type": "string",
+            "description": "Número sequencial único",
+            "example": "0459360"
+          },
+          "valor": {
+            "type": "number",
+            "description": "Valor bruto da transação",
+            "example": 98.35
+          },
+          "bandeira": {
+            "type": "string",
+            "description": "Bandeira do cartão do consumidor",
+            "enum": ["VISA", "MASTERCARD", "ELO", "AMEX"]
+          },
+          "modalidade": {
+            "type": "string",
+            "description": "Modalidade utilizada na transação",
+            "enum": ["debito", "credito"]
+          },
+          "horario": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2016-08-29T09:12:33.001Z"
+          },
+          "liquido": {
+            "type": "number",
+            "description": "Valor líquido a receber, já descontando as taxas",
+            "example": 98.35
+          },
+          "disponivel": {
+            "type": "string",
+            "description": "Data em que a transação estará disponível para recebimento para o estabelecimento",
+            "format": "date"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "disponivel": {
+            "type": "number",
+            "description": "Valor líquido a receber na data.",
+            "example": 26.35
+          },
+          "receber": {
+            "type": "number",
+            "description": "valor transacionado ainda não disponível para receber.",
+            "example": 2580.36
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication information is missing or invalid",
+        "headers": {
+          "WWW_Authenticate": {
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

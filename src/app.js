@@ -1,10 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import Youch from 'youch';
+import swaggerUi from 'swagger-ui-express';
 import 'express-async-errors';
+
 import routes from './routes';
 import './database';
 import 'dotenv/config';
+import swaggerDocument from './swagger.json';
 
 class App {
   constructor() {
@@ -21,6 +24,11 @@ class App {
   }
 
   routes() {
+    this.server.use(
+      '/api-docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument)
+    );
     this.server.use('/api/v1', routes);
   }
 
