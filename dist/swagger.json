@@ -47,6 +47,11 @@
                   "items": {
                     "$ref": "#/components/schemas/TransacaoCompleta"
                   }
+                },
+                "headers": {
+                  "Access-Control-Allow-Origin": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -78,6 +83,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/inline_response_200"
+                },
+                "headers": {
+                  "Access-Control-Allow-Origin": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -119,6 +129,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransacaoCompleta"
+                },
+                "headers": {
+                  "Access-Control-Allow-Origin": {
+                    "type": "string"
+                  }
                 }
               }
             }
