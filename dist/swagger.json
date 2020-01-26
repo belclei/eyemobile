@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://eyemobile.herokuapp.com/api/v1"
+      "url": "https://eyemobile.herokuapp.com/api/v1"
     },
     {
       "url": "http://eyemobile.herokuapp.com/api/v1"
